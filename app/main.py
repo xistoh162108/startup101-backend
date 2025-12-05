@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
 from app.core.config import settings
@@ -57,6 +58,19 @@ app = FastAPI(
 
 # Add middleware
 app.add_middleware(RequestIdMiddleware)
+
+# Configure CORS
+# Allow requests from frontend (localhost:3000 for dev, reviewtrust.siwon.site for production)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "https://reviewtrust.siwon.site",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, OPTIONS, etc.)
+    allow_headers=["*"],  # Allow all headers including X-Admin-Key
+)
 
 
 # Exception handlers
